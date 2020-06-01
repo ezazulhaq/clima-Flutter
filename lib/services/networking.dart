@@ -6,9 +6,9 @@ class NetworkHelper {
 
   String url;
 
-  Future<String> getDate() async {
+  Future getDate() async {
     Http.Response response = await Http.get(url);
-    String dataJson;
+    var dataJson;
     if (response.statusCode == 200) {
       String data = response.body;
       print(data);
