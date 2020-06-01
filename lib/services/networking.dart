@@ -11,7 +11,7 @@ class NetworkHelper {
     var dataJson;
     if (response.statusCode == 200) {
       String data = response.body;
-      print(data);
+      //print(data);
       dataJson = jsonDecode(data);
     } else {
       dataJson = response.statusCode.toString();

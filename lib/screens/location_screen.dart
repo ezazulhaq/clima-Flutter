@@ -2,11 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
+  LocationScreen({this.locationData});
+
+  final locationData;
+
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
+  double temperature;
+  int condition;
+  String country;
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.locationData);
+  }
+
+  void updateUI(dynamic weatherData) {
+    temperature = weatherData['main']['temp']; // path - main.temp
+    condition = weatherData['weather'][0]['id']; // path - weather[0].id
+    country = weatherData['name']; // path - name
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,13 +68,19 @@ class _LocationScreenState extends State<LocationScreen> {
                 padding: EdgeInsets.only(left: 15.0),
                 child: Row(
                   children: <Widget>[
-                    Text(
-                      '32°',
-                      style: kTempTextStyle,
+                    Expanded(
+                      flex: 5,
+                      child: Text(
+                        temperature.toStringAsFixed(1),
+                        style: kTempTextStyle,
+                      ),
                     ),
-                    Text(
-                      '☀️',
-                      style: kConditionTextStyle,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        '☀️',
+                        style: kConditionTextStyle,
+                      ),
                     ),
                   ],
                 ),
@@ -62,7 +88,7 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  "It's 🍦 time in San Francisco!",
+                  "It's 🍦 time in $country!",
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),
