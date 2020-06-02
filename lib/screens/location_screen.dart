@@ -1,3 +1,4 @@
+import 'package:clima/screens/city_screen.dart';
 import 'package:clima/services/weather.dart';
 import 'package:flutter/material.dart';
 import 'package:clima/utilities/constants.dart';
@@ -12,9 +13,10 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  String temperature;
+  var temperature;
   int condition;
   String country;
+  String weatherIcon;
   String message;
 
   @override
@@ -27,9 +29,18 @@ class _LocationScreenState extends State<LocationScreen> {
 
   void updateUI(dynamic weatherData) {
     setState(() {
-      double temp = weatherData['main']['temp']; // path - main.temp
+//      if (weatherData == null) {
+//        temperature = '0';
+//        condition = 0;
+//        weatherIcon = weatherModel.getWeatherIcon(condition);
+//        country = "NULL";
+//        message = 'Unable to get Data';
+//        return;
+//      }
+      dynamic temp = weatherData['main']['temp']; // path - main.temp
       temperature = temp.toStringAsFixed(1);
       condition = weatherData['weather'][0]['id']; // path - weather[0].id
+      weatherIcon = weatherModel.getWeatherIcon(condition);
       country = weatherData['name']; // path - name
       message = weatherModel.getMessage(temp);
     });
@@ -67,7 +78,22 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                   FlatButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var typeName = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CityScreen(),
+                        ),
+                      );
+                      print(typeName);
+                      if (typeName != null) {
+                        var weatherData =
+                            await weatherModel.getCityLocation(typeName);
+                        updateUI(weatherData);
+                      } else {
+                        updateUI(weatherModel.getCurrentLocation());
+                      }
+                    },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
@@ -89,7 +115,7 @@ class _LocationScreenState extends State<LocationScreen> {
                     Expanded(
                       flex: 1,
                       child: Text(
-                        weatherModel.getWeatherIcon(condition),
+                        '$weatherIcon',
                         style: kConditionTextStyle,
                       ),
                     ),
